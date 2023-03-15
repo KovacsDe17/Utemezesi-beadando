@@ -1,16 +1,8 @@
-import com.mxgraph.layout.mxCircleLayout;
-import com.mxgraph.layout.mxIGraphLayout;
-import com.mxgraph.util.mxCellRenderer;
+import org.jgraph.graph.Edge;
+import org.jgrapht.EdgeFactory;
 import org.jgrapht.Graph;
-import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
@@ -33,23 +25,6 @@ public class Main {
 
         System.out.println(graph.toString());
 
-
-        //Setup graph adapter for visualization
-        JGraphXAdapter<String, DefaultEdge> graphAdapter =
-                new JGraphXAdapter<String, DefaultEdge>(graph);
-        mxIGraphLayout layout = new mxCircleLayout(graphAdapter);
-        layout.execute(graphAdapter.getDefaultParent());
-
-        BufferedImage image =
-                mxCellRenderer.createBufferedImage(graphAdapter, null, 2, Color.WHITE, true, null);
-
-        //Create new file and write into it
-        File imgFile = new File(".\\src\\main\\resources\\graph.png");
-        try{
-            imgFile.createNewFile();
-            ImageIO.write(image, "PNG", imgFile);
-        }catch (IOException e){
-            System.err.println(e);
-        }
+        GraphHandler.Visualize(graph);
     }
 }
