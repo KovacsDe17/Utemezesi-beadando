@@ -1,12 +1,13 @@
-import org.jgraph.graph.Edge;
-import org.jgrapht.EdgeFactory;
 import org.jgrapht.Graph;
+import org.jgrapht.ListenableGraph;
 import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultListenableGraph;
+import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.graph.SimpleGraph;
 
 public class Main {
     public static void main(String[] args) {
-        Graph<String, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
+        Graph<String, DefaultEdge> graph = new SimpleDirectedGraph<>(DefaultEdge.class);
 
         String v1 = "Vertex 01";
         String v2 = "Vertex 02";
