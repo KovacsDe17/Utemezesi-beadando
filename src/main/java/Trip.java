@@ -1,14 +1,19 @@
 import java.util.Objects;
 
 public class Trip {
+    private static int count = 0;
+
     private int arriveTime;
     private int departureTime;
     private String tripType;
+    private int id;
 
-    public Trip(int arriveTime, int departureTime, String tripType) {
-        this.arriveTime = arriveTime;
+    public Trip(int departureTime, int arriveTime,  String tripType) {
         this.departureTime = departureTime;
+        this.arriveTime = arriveTime;
         this.tripType = tripType;
+        this.id = count;
+        count++;
     }
 
     public int getArriveTime() {
@@ -37,13 +42,17 @@ public class Trip {
 
     @Override
     public String toString() {
-        return "Trip{" +
-                "at = " + arriveTime +
-                ", dt = " + departureTime +
-                ", type = '" + tripType + '\'' +
-                '}';
+        return "Trip_"+id;
     }
 
+    public String toStringExtended(){
+        return "Trip{" +
+                "dt=" + departureTime +
+                ", at=" + arriveTime +
+                ", type='" + tripType + '\'' +
+                '}';
+
+    }
 
     public boolean compatible(Trip trip) {
         if (this == trip) return false;

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ExcelHandler {
+    private static final String DEFAULT_FILE_LOCATION = ".\\src\\main\\resources\\input\\Input_VSP.xlsx";
 
     public static Workbook openWorkbook(String fileLocation){
         FileInputStream file;
@@ -27,6 +28,10 @@ public class ExcelHandler {
         }
 
         return workbook;
+    }
+
+    public static Workbook openWorkbook(){
+        return openWorkbook(DEFAULT_FILE_LOCATION);
     }
 
     public static Map<Integer, List<String>> getDataFrom(Workbook workbook, int sheetIndex){
@@ -44,7 +49,6 @@ public class ExcelHandler {
                     case FORMULA: data.get(i).add(cell.getCellFormula()); break;
                     default: data.get(i).add(" ");
                 }
-                //data.get(i).add(cell.getRichStringCellValue().getString());
             }
             i++;
         }
