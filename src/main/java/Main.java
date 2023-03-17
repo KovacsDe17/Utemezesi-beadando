@@ -1,3 +1,4 @@
+import org.apache.poi.ss.usermodel.Workbook;
 import org.jgrapht.Graph;
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -26,6 +27,12 @@ public class Main {
 
         System.out.println(graph.toString());
 
-        GraphHandler.Visualize(graph);
+        //GraphHandler.Visualize(graph);
+
+        String fileLocation = ".\\src\\main\\resources\\input\\Input_VSP.xlsx";
+        Workbook workbook = ExcelHandler.openWorkbook(fileLocation);
+        var data = ExcelHandler.getDataFrom(workbook,1);
+
+        System.out.println(data.toString());
     }
 }

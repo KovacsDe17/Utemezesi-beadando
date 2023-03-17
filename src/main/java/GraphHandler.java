@@ -43,7 +43,7 @@ public class GraphHandler {
                 mxCellRenderer.createBufferedImage(graphAdapter, null, 1, Color.WHITE, true, null);
 
         //Create new file and write into it
-        String filename = ".\\src\\main\\resources\\graph_" + getTimestamp() + ".png";
+        String filename = ".\\src\\main\\resources\\graph_exports\\graph_" + getTimestamp() + ".png";
         File imgFile = new File(filename);
 
         try{
