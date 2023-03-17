@@ -36,6 +36,10 @@ public class Main {
 
         //System.out.println(data.toString());
 
-        
+        Trip trip1 = new Trip(200,205,"Type1");
+        Trip trip2 = new Trip(206,210,"Type1");
+
+        boolean compatible = trip2.compatible(trip1);
+        System.out.println("Trip1 and Trip2 are " + (compatible?"compatible":"incompatible"));
     }
 }

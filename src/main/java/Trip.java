@@ -38,17 +38,31 @@ public class Trip {
     @Override
     public String toString() {
         return "Trip{" +
-                "a_t = " + arriveTime +
-                ", d_t = " + departureTime +
+                "at = " + arriveTime +
+                ", dt = " + departureTime +
                 ", type = '" + tripType + '\'' +
                 '}';
     }
 
-    public boolean compatible(Object o) {
-        if (this == o) return false;
+
+    public boolean compatible(Trip trip) {
+        if (this == trip) return false;
+        return arriveTime <= trip.departureTime &&
+                Objects.equals(tripType, trip.tripType);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Trip trip = (Trip) o;
-        return (arriveTime <= trip.departureTime || trip.arriveTime <= departureTime) &&
+        return arriveTime == trip.arriveTime &&
+                departureTime == trip.departureTime &&
                 Objects.equals(tripType, trip.tripType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(arriveTime, departureTime, tripType);
     }
 }
