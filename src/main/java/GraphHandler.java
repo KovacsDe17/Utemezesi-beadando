@@ -1,33 +1,26 @@
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
-
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxIGraphLayout;
-import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.util.mxConstants;
-import com.mxgraph.view.mxStylesheet;
 import org.jgraph.graph.DefaultEdge;
 import org.jgrapht.Graph;
-import org.jgrapht.ListenableGraph;
 import org.jgrapht.ext.JGraphXAdapter;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class GraphHandler {
 
     private static final String timestampPattern = "yyyyMMdd_HHmmss";
+    private static final String saveFolder = ".\\src\\main\\resources\\graph_exports";
 
     public static void SaveAsImage(Graph graph){
         //Setup graph adapter for visualization
@@ -43,7 +36,7 @@ public class GraphHandler {
                 mxCellRenderer.createBufferedImage(graphAdapter, null, 1, Color.WHITE, true, null);
 
         //Create new file and write into it
-        String filename = ".\\src\\main\\resources\\graph_exports\\graph_" + getTimestamp() + ".png";
+        String filename = saveFolder + "\\graph_" + getTimestamp() + ".png";
         File imgFile = new File(filename);
 
         try{

@@ -1,3 +1,4 @@
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.jgrapht.Graph;
 import org.jgrapht.ListenableGraph;
@@ -33,6 +34,8 @@ public class Main {
         Workbook workbook = ExcelHandler.openWorkbook(fileLocation);
         var data = ExcelHandler.getDataFrom(workbook,1);
 
-        System.out.println(data.toString());
+        //System.out.println(data.toString());
+
+        
     }
 }
