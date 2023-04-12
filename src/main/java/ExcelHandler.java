@@ -1,12 +1,8 @@
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +40,11 @@ public class ExcelHandler {
             for (Cell cell : row) {
                 switch (cell.getCellType()) {
                     case STRING: data.get(i).add(cell.getStringCellValue()); break;
-                    case NUMERIC: data.get(i).add(String.valueOf(cell.getNumericCellValue())); break;
+                    case NUMERIC: if (DateUtil.isCellDateFormatted(cell)) {
+                        data.get(i).add(dateToInt(cell.getDateCellValue()) + "");
+                    } else {
+                        data.get(i).add(cell.getNumericCellValue() + "");
+                    }; break;
                     case BOOLEAN: data.get(i).add(String.valueOf(cell.getBooleanCellValue())); break;
                     case FORMULA: data.get(i).add(cell.getCellFormula()); break;
                     default: data.get(i).add(" ");
@@ -54,5 +54,14 @@ public class ExcelHandler {
         }
 
         return data;
+    }
+
+    private static int dateToInt(java.util.Date date){
+        int number = 0;
+
+        number += date.getHours()*60;
+        number += date.getMinutes();
+
+        return number;
     }
 }

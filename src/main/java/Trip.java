@@ -1,19 +1,29 @@
-import java.util.Objects;
+import java.util.*;
 
 public class Trip {
     private static int count = 0;
 
-    private int arriveTime;
     private int departureTime;
+    private int arriveTime;
+    private int additionalTime;
     private String tripType;
-    private int id;
+    private final int id;
 
-    public Trip(int departureTime, int arriveTime,  String tripType) {
+    public Trip(int departureTime, int arriveTime, int additionalTime,  String tripType) {
         this.departureTime = departureTime;
         this.arriveTime = arriveTime;
+        this.additionalTime = additionalTime;
         this.tripType = tripType;
         this.id = count;
         count++;
+    }
+
+    public int getDepartureTime() {
+        return departureTime;
+    }
+
+    public void setDepartureTime(int departureTime) {
+        this.departureTime = departureTime;
     }
 
     public int getArriveTime() {
@@ -24,12 +34,12 @@ public class Trip {
         this.arriveTime = arriveTime;
     }
 
-    public int getDepartureTime() {
-        return departureTime;
+    public int getAdditionalTime() {
+        return additionalTime;
     }
 
-    public void setDepartureTime(int departureTime) {
-        this.departureTime = departureTime;
+    public void setAdditionalTime(int additionalTime) {
+        this.additionalTime = additionalTime;
     }
 
     public String getTripType() {
@@ -49,15 +59,16 @@ public class Trip {
         return "Trip{" +
                 "dt=" + departureTime +
                 ", at=" + arriveTime +
-                ", type='" + tripType + '\'' +
+                ", id='" + tripType + '\'' +
+                ", add=" + additionalTime +
                 '}';
 
     }
 
     public boolean compatible(Trip trip) {
-        if (this == trip) return false;
-        return arriveTime <= trip.departureTime &&
-                Objects.equals(tripType, trip.tripType);
+        if (this.equals(trip)) return false;
+        return arriveTime + additionalTime <= trip.departureTime &&
+                !Objects.equals(tripType, trip.tripType);
     }
 
     @Override
