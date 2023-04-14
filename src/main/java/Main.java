@@ -1,18 +1,14 @@
 public class Main {
     public static void main(String[] args) {
-        var routeParameters = ExcelHandler.getDataFrom(ExcelHandler.openWorkbook(),0);
+        var routeParameters = Excel.getDataFrom(Excel.openWorkbook(),0);
+        var busLines = Excel.getDataFrom(Excel.openWorkbook(),1);
 
-
-        var busLines = ExcelHandler.getDataFrom(ExcelHandler.openWorkbook(),1);
         System.out.println("Size: " + busLines.size());
-        var trips = TripHandler.getTrips(busLines, RouteHandler.getRouteParameters(routeParameters));
+        var trips = TripHandler.toList(busLines, RouteHandler.toList(routeParameters));
 
-
-        var graph = TripHandler.tripsToGraph(trips);
+        var graph = TripHandler.createGraph(trips);
         System.out.println("Edge count: " + graph.edgeSet().size());
-        GraphVisuals.OpenInJFrame(graph);
 
-
-        //TripHandler.dataToParameters(parameters);
+        Visuals.OpenInJFrame(graph);
     }
 }

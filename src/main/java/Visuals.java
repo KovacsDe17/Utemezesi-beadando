@@ -17,11 +17,11 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class GraphVisuals {
+public class Visuals {
 
     private static final String TIMESTAMP_PATTERN = "yyyyMMdd_HHmmss";
     private static final String SAVE_FOLDER = ".\\src\\main\\resources\\graph_exports";
-    private static JLabel label = new JLabel("Selected: -");
+    private static JLabel label = new JLabel("Selected: None (Click on an edge or vertex to show info)");
 
     public static void SaveAsImage(Graph graph){
         //Setup graph adapter for visualization
@@ -67,19 +67,26 @@ public class GraphVisuals {
         graphComponent.setBorder(padding);
         graphComponent.setConnectable(false);
         graphComponent.getGraph().setAllowDanglingEdges(false);
+        graphComponent.getGraph().setCellsEditable(false);
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         label.setVisible(true);
+        label.setHorizontalAlignment(SwingConstants.LEFT);
+        JScrollPane scrollPane = new JScrollPane(graphComponent);
+
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setWheelScrollingEnabled(true);
 
         JFrame frame = new JFrame("VSP Graph Visuals");
 
         panel.add(label);
-        panel.add(graphComponent);
+        panel.add(scrollPane);
         frame.add(panel);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
@@ -106,17 +113,21 @@ public class GraphVisuals {
             mxGraphSelectionModel sm = (mxGraphSelectionModel) sender;
             mxCell cell = (mxCell) sm.getCell();
 
-            //TODO: Set proper info (at_i, dt_i, at_j, dt_j, etc.) using Trip class
             if (cell != null && cell.isVertex()) {
                 //System.out.println(cell.getValue() + " has been touched");
-                label.setText("Selected: " + cell.getValue());
+                Trip trip = (Trip) cell.getValue();
+                label.setText("Selected: " + trip.toStringExtended());
             }else if(cell != null && cell.isEdge()){
                 //System.out.println(cell.getValue() + " has been touched");
-                label.setText("Selected: " + cell.getValue());
+
+                Trip source = (Trip) cell.getSource().getValue();
+                Trip target = (Trip) cell.getTarget().getValue();
+
+                label.setText("Selected: " + source.toStringExtended() + " --> " + target.toStringExtended());
             }
             else if(cell == null){
-                System.out.println("Deselection happened");
-                label.setText("Selected: -");
+                //System.out.println("Deselection happened");
+                label.setText("Selected: None (Click on an edge or vertex to show info)");
             }
         });
     }

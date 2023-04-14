@@ -6,48 +6,16 @@ public class Trip {
     private int departureTime;
     private int arriveTime;
     private int additionalTime;
-    private String tripType;
+    private StationPair stations;
     private final int id;
 
-    public Trip(int departureTime, int arriveTime, int additionalTime,  String tripType) {
+    public Trip(int departureTime, int arriveTime, int additionalTime,  StationPair stations) {
         this.departureTime = departureTime;
         this.arriveTime = arriveTime;
         this.additionalTime = additionalTime;
-        this.tripType = tripType;
+        this.stations = stations;
         this.id = count;
         count++;
-    }
-
-    public int getDepartureTime() {
-        return departureTime;
-    }
-
-    public void setDepartureTime(int departureTime) {
-        this.departureTime = departureTime;
-    }
-
-    public int getArriveTime() {
-        return arriveTime;
-    }
-
-    public void setArriveTime(int arriveTime) {
-        this.arriveTime = arriveTime;
-    }
-
-    public int getAdditionalTime() {
-        return additionalTime;
-    }
-
-    public void setAdditionalTime(int additionalTime) {
-        this.additionalTime = additionalTime;
-    }
-
-    public String getTripType() {
-        return tripType;
-    }
-
-    public void setTripType(String tripType) {
-        this.tripType = tripType;
     }
 
     @Override
@@ -56,19 +24,23 @@ public class Trip {
     }
 
     public String toStringExtended(){
-        return "Trip{" +
-                "dt=" + departureTime +
+        return "Trip_" + id +
+                ":{dt=" + departureTime +
                 ", at=" + arriveTime +
-                ", id='" + tripType + '\'' +
+                ", tt=" + stations +
                 ", add=" + additionalTime +
                 '}';
-
     }
 
-    public boolean compatible(Trip trip) {
-        if (this.equals(trip)) return false;
-        return arriveTime + additionalTime <= trip.departureTime &&
-                !Objects.equals(tripType, trip.tripType);
+    /***
+     * Compatibility: If the current trip arrives at the starting station of the next one before the next one departs (including technological and equalizing times).
+     * @param nextTrip The trip which comes after the current one.
+     * @return True if the trips are compatible, false otherwise.
+     */
+    public boolean compatible(Trip nextTrip) {
+        if (this.equals(nextTrip)) return false;
+        return arriveTime + additionalTime <= nextTrip.departureTime &&
+                stations.getEndStation().equals(nextTrip.stations.getStartStation());
     }
 
     @Override
@@ -78,11 +50,11 @@ public class Trip {
         Trip trip = (Trip) o;
         return arriveTime == trip.arriveTime &&
                 departureTime == trip.departureTime &&
-                Objects.equals(tripType, trip.tripType);
+                Objects.equals(stations, trip.stations);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(arriveTime, departureTime, tripType);
+        return Objects.hash(arriveTime, departureTime, stations);
     }
 }

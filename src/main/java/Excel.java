@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ExcelHandler {
+public class Excel {
     private static final String DEFAULT_FILE_LOCATION = ".\\src\\main\\resources\\input\\Input_VSP.xlsx";
 
     public static Workbook openWorkbook(String fileLocation){

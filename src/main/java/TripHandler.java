@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class TripHandler {
 
-    public static List<Trip> getTrips(Map<Integer, List<String>> busLinesData, List<RouteParameter> routeParameters){
+    public static List<Trip> toList(Map<Integer, List<String>> busLinesData, List<RouteParameter> routeParameters){
         List<Trip> trips = new ArrayList<>();
 
         busLinesData.remove(0);
@@ -19,33 +19,34 @@ public class TripHandler {
             int arriveTime = (int) Float.parseFloat(((List<String>) row.getValue()).get(1));
             String tripType = ((List<String>) row.getValue()).get(2);
 
+            StationPair stationPair = Stations.FindPair(tripType);
+            RouteParameter routeParameter = RouteHandler.findCompatible(routeParameters, stationPair, arriveTime);
+
             Trip trip = new Trip(
                 departureTime,
                 arriveTime,
-                RouteHandler.findCompatible(routeParameters, tripType, arriveTime).getAdditionalTime(),
-                tripType
+                routeParameter.getAdditionalTime(),
+                stationPair
             );
 
             trips.add(trip);
-            //System.out.println(trip.toStringExtended());
         }
 
         return trips;
     }
 
-        public static Graph<Trip, DefaultEdge> tripsToGraph(List<Trip> trips){
+        public static Graph<Trip, DefaultEdge> createGraph(List<Trip> trips){
         Graph<Trip, DefaultEdge> graph = new SimpleDirectedGraph<>(DefaultEdge.class);
 
         int index = 0;
         for (Trip trip : trips) {
             graph.addVertex(trip);
 
-            /*
-            if(index >= 10)
+
+            /*/Debug - Break at 100 records
+            if(index >= 100)
                 break;
-
-             */
-
+            */
             index++;
 
         }
@@ -63,16 +64,19 @@ public class TripHandler {
     public static Graph<Trip, DefaultEdge> testGraph(){
         Graph<Trip, DefaultEdge> graph = new SimpleDirectedGraph<>(DefaultEdge.class);
 
-        Trip trip0 = new Trip(1,4,0,"type1");
-        Trip trip1 = new Trip(1,2,0,"type1");
-        Trip trip2 = new Trip(3,5,0,"type1");
-        Trip trip3 = new Trip(2,4,0,"type1");
-        Trip trip4 = new Trip(1,3,0,"type1");
-        Trip trip5 = new Trip(1,2,0,"type2");
-        Trip trip6 = new Trip(1,3,0,"type2");
-        Trip trip7 = new Trip(2,3,0,"type2");
-        Trip trip8 = new Trip(4,5,0,"type2");
-        Trip trip9 = new Trip(3,5,0,"type2");
+        StationPair type1 = new StationPair("A","B");
+        StationPair type2 = new StationPair("B","A");
+
+        Trip trip0 = new Trip(1,4,0,type1);
+        Trip trip1 = new Trip(1,2,0,type1);
+        Trip trip2 = new Trip(3,5,0,type1);
+        Trip trip3 = new Trip(2,4,0,type1);
+        Trip trip4 = new Trip(1,3,0,type1);
+        Trip trip5 = new Trip(1,2,0,type2);
+        Trip trip6 = new Trip(1,3,0,type2);
+        Trip trip7 = new Trip(2,3,0,type2);
+        Trip trip8 = new Trip(4,5,0,type2);
+        Trip trip9 = new Trip(3,5,0,type2);
 
         graph.addVertex(trip0);
         graph.addVertex(trip1);
