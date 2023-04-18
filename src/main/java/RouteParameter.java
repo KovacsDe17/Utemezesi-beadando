@@ -1,20 +1,20 @@
 public class RouteParameter {
-    private StationPair stationPair;
-    private int timeFrom;
-    private int timeTo;
-    private int technologicalTime;
-    private int equalizingTime;
+    private final Terminals terminals;
+    private final int timeFrom;
+    private final int timeTo;
+    private final int technologicalTime;
+    private final int equalizingTime;
 
-    public RouteParameter(StationPair stationPair, int timeFrom, int timeTo, int technologicalTime, int equalizingTime) {
-        this.stationPair = stationPair;
+    public RouteParameter(Terminals terminals, int timeFrom, int timeTo, int technologicalTime, int equalizingTime) {
+        this.terminals = terminals;
         this.timeFrom = timeFrom;
         this.timeTo = timeTo;
         this.technologicalTime = technologicalTime;
         this.equalizingTime = equalizingTime;
     }
 
-    public StationPair getStationPair() {
-        return stationPair;
+    public Terminals getStationPair() {
+        return terminals;
     }
 
     public int getTimeTo() {
@@ -28,7 +28,7 @@ public class RouteParameter {
     @Override
     public String toString() {
         return "[" +
-                "stationPair=" + stationPair +
+                "stationPair=" + terminals +
                 ", from=" + timeFrom +
                 ", to=" + timeTo +
                 ", tech=" + technologicalTime +

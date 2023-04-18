@@ -1,14 +1,19 @@
+import org.apache.poi.ss.usermodel.Workbook;
+
 public class Main {
     public static void main(String[] args) {
-        var routeParameters = Excel.getDataFrom(Excel.openWorkbook(),0);
-        var busLines = Excel.getDataFrom(Excel.openWorkbook(),1);
+        var excel = Excel.getInstance();
+        Workbook workbook = excel.openWorkbook();
+        var routeParameters = excel.getDataFrom(workbook,0);
+        var busLines = excel.getDataFrom(workbook,1);
 
-        System.out.println("Size: " + busLines.size());
-        var trips = TripHandler.toList(busLines, RouteHandler.toList(routeParameters));
+        var trips = Line.toList(busLines, Route.toList(routeParameters));
 
-        var graph = TripHandler.createGraph(trips);
+        var graph = Graph.createFromList(trips);
+        System.out.println("Vertex count: " + graph.vertexSet().size());
         System.out.println("Edge count: " + graph.edgeSet().size());
 
-        Visuals.OpenInJFrame(graph);
+        Visuals.setGraph(graph);
+        Visuals.MainMenu();
     }
 }
