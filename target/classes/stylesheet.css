@@ -1,0 +1,27 @@
+node{
+    shape: circle;
+    size: 25px;
+    fill-mode: plain;   /* Default.          */
+    fill-color: lightblue;    /* Default is black. */
+    stroke-mode: plain; /* Default is none.  */
+    stroke-color: black; /* Default is black. */
+    text-alignment: center;
+}
+node:clicked{
+    fill-color: red;
+}
+
+edge{
+    arrow-size: 10px,5px;
+}
+
+edge.rezsi{
+    stroke-mode: dashes;
+}
+
+sprite{
+    shape: box;
+    size: 32px;
+    fill-color: blue;
+    z-index: -1;
+}

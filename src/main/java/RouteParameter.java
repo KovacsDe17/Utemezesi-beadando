@@ -13,7 +13,7 @@ public class RouteParameter {
         this.equalizingTime = equalizingTime;
     }
 
-    public Terminals getStationPair() {
+    public Terminals getTerminals() {
         return terminals;
     }
 
@@ -28,7 +28,7 @@ public class RouteParameter {
     @Override
     public String toString() {
         return "[" +
-                "stationPair=" + terminals +
+                "terminals=" + terminals +
                 ", from=" + timeFrom +
                 ", to=" + timeTo +
                 ", tech=" + technologicalTime +

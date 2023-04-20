@@ -1,11 +1,25 @@
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleDirectedGraph;
 
-import java.util.List;
+/**
+ * This class is responsible for the graph logic, such as manipulating nodes and edges
+ */
+public class GraphModel {
 
-public class Graph {
+    /**
+     * Loads data from the Excel input file and builds a Connection Based VSP Graph based on it
+     * @return A graph based on the Excel input file
+     */
+    public static org.jgrapht.Graph<Line, DefaultEdge> LoadConnectionBasedGraph(){
+        //Load list from Excel...
 
-    public static org.jgrapht.Graph<Line, DefaultEdge> createFromList(List<Line> lines){
+        //Parse list to graph...
+
+        //Return graph
+        return null;
+    }
+
+    /*
+    public static org.jgrapht.Graph<Line, DefaultEdge> addVerticesFromList(List<Line> lines){
         org.jgrapht.Graph<Line, DefaultEdge> graph = new SimpleDirectedGraph<>(DefaultEdge.class);
 
         int index = 0;
@@ -18,6 +32,10 @@ public class Graph {
             index++;
         }
 
+        return graph;
+    }
+
+    public static void addEdgesCompatible(org.jgrapht.Graph<Line, DefaultEdge> graph){
         //Set edge between them if they are compatible
         for (Line line_i : graph.vertexSet()) {
             for (Line line_j : graph.vertexSet()) {
@@ -26,7 +44,6 @@ public class Graph {
             }
         }
 
-        return graph;
     }
 
     public static org.jgrapht.Graph<Line, DefaultEdge> createTest(){
@@ -69,4 +86,6 @@ public class Graph {
 
         return graph;
     }
+
+     */
 }

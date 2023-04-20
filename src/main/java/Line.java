@@ -20,11 +20,11 @@ public class Line {
 
     @Override
     public String toString() {
-        return "Trip_"+id;
+        return "L_"+id;
     }
 
     public String toStringExtended(){
-        return "Trip_" + id +
+        return "L_" + id +
                 ":{dt=" + departureTime +
                 ", at=" + arriveTime +
                 ", tt=" + terminals +
@@ -61,6 +61,7 @@ public class Line {
     public static List<Line> toList(Map<Integer, List<String>> busLinesData, List<RouteParameter> routeParameters){
         List<Line> lines = new ArrayList<>();
 
+        //Remove header
         busLinesData.remove(0);
         for (Map.Entry<Integer, List<String>> row:
                 busLinesData.entrySet()) {

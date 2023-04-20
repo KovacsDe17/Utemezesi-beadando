@@ -1,12 +1,3 @@
-import com.mxgraph.layout.*;
-import com.mxgraph.model.mxCell;
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.util.*;
-import com.mxgraph.view.mxGraphSelectionModel;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.Graph;
-import org.jgrapht.ext.JGraphXAdapter;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -17,9 +8,14 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Visuals {
-
+/**
+ * This class is responsible for the GUI
+ */
+public class Frames {
+/*
     private static final String TIMESTAMP_PATTERN = "yyyyMMdd_HHmmss";
     private static final String SAVE_FOLDER = ".\\src\\main\\resources\\graph_exports";
     private final static JLabel label = new JLabel("Selected: None (Click on an edge or vertex to show info)");
@@ -29,15 +25,8 @@ public class Visuals {
         _graph = graphSet;
     }
 
-    public static void SaveAsImage(){
-        //Setup graph adapter for visualization
-        JGraphXAdapter<Line, DefaultEdge> graphAdapter =
-                new JGraphXAdapter<>(_graph);
-
-        setupGraphStyle(graphAdapter);
-
-        mxIGraphLayout layout = new mxCircleLayout(graphAdapter);
-        layout.execute(graphAdapter.getDefaultParent());
+    public static boolean SaveAsImage(JGraphXAdapter<Line, DefaultEdge> graphAdapter){
+        boolean isSuccessful;
 
         BufferedImage image =
                 mxCellRenderer.createBufferedImage(graphAdapter, null, 1, Color.WHITE, true, null);
@@ -49,10 +38,13 @@ public class Visuals {
         try{
             boolean success = imgFile.createNewFile();
             ImageIO.write(image, "PNG", imgFile);
-
+            isSuccessful = true;
         }catch (IOException e){
             System.err.println(e.getMessage());
+            isSuccessful = false;
         }
+
+        return isSuccessful;
     }
 
     public static void MainMenu(){
@@ -108,9 +100,12 @@ public class Visuals {
         JGraphXAdapter<Line, DefaultEdge> graphAdapter =
                 new JGraphXAdapter<>(_graph);
 
-        setupGraphStyle(graphAdapter);
+
         setupGraphEvents(graphAdapter);
         mxGraphComponent graphComponent = getConnectionBasedGraph(graphAdapter);
+        graphComponent.removeMouseWheelListener(graphComponent.getMouseWheelListeners()[0]);
+
+        addSwimlane(graphAdapter);
 
         JFrame frame = new JFrame("VSP Graph Visuals");
 
@@ -141,9 +136,11 @@ public class Visuals {
         frame.add(panel);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setSize(800,600);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+        setupGraphStyle(graphAdapter);
     }
 
     public static String getTimestamp(){
@@ -154,7 +151,7 @@ public class Visuals {
     }
 
     private static mxGraphComponent getConnectionBasedGraph(JGraphXAdapter<Line, DefaultEdge> graphAdapter){
-        mxStackLayout stackLayout = new mxStackLayout(graphAdapter,false, 20,100,50,0);
+        mxStackLayout stackLayout = new mxStackLayout(graphAdapter,true, 20,0,0,0);
         stackLayout.execute(graphAdapter.getDefaultParent());
 
         mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
@@ -164,23 +161,59 @@ public class Visuals {
         graphComponent.getGraph().setAllowDanglingEdges(false);
         graphComponent.getGraph().setCellsEditable(false);
 
-
-
         return graphComponent;
+    }
+
+    private static void addSwimlane(JGraphXAdapter<Line, DefaultEdge> adapter){
+        var graph = adapter.getView().getGraph();
+
+        var lane1 = graph.insertVertex(graph.getDefaultParent(), null, "Lane 1", 0, 0, 1000, 100, "swimlane");
+        var lane2 = graph.insertVertex(graph.getDefaultParent(), null, "Lane 2", 0, 100, 1000, 100, "swimlane");
+        // use as parent...
+        var v1 = graph.insertVertex(lane1, null, 'A', 0, 0, 30, 30);
+
+
     }
 
     private static void setupGraphStyle(JGraphXAdapter<Line, DefaultEdge> adapter){
         //Setup edge style
-        adapter.getStylesheet().getDefaultEdgeStyle().put(mxConstants.STYLE_NOLABEL, "1");
-        adapter.getStylesheet().getDefaultEdgeStyle().put(mxConstants.STYLE_DASHED, "1");
-        adapter.getStylesheet().getDefaultEdgeStyle().put(mxConstants.STYLE_STROKECOLOR, "#d7d7d7");
+        Map<String, Object> edgeStyle = new HashMap<>();
+        edgeStyle.put(mxConstants.STYLE_NOLABEL, "1");
+        edgeStyle.put(mxConstants.STYLE_DASHED, "1");
+        edgeStyle.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+        adapter.getStylesheet().putCellStyle("edgeStyle", edgeStyle);
 
         //Setup vertex style
-        adapter.getStylesheet().getDefaultVertexStyle().put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_LABEL);
-        adapter.getStylesheet().getDefaultVertexStyle().put(mxConstants.STYLE_FILLCOLOR, "#3abff1");
-        adapter.getStylesheet().getDefaultVertexStyle().put(mxConstants.STYLE_ROUNDED, "1");
-        adapter.getStylesheet().getDefaultVertexStyle().put(mxConstants.STYLE_STROKEWIDTH, "2");
-        adapter.getStylesheet().getDefaultVertexStyle().put(mxConstants.STYLE_FONTCOLOR, "#000000");
+        Map<String, Object> vertexStyle = new HashMap<>();
+        vertexStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
+        vertexStyle.put(mxConstants.STYLE_FILLCOLOR, "#3abff1");
+        vertexStyle.put(mxConstants.STYLE_STROKEWIDTH, "1.5f");
+        vertexStyle.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+        vertexStyle.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+        adapter.getStylesheet().putCellStyle("vertexStyle", vertexStyle);
+
+
+        //Set vertex size
+        int vertexSize = 35;
+        for (Object cell :
+                adapter.getChildCells(adapter.getDefaultParent(), true, false)) {
+
+            if(((mxCell) cell).isVertex()){
+                mxCell vertex = (mxCell) cell;
+
+                vertex.getGeometry().setHeight(vertexSize);
+                vertex.getGeometry().setWidth(vertexSize);
+                vertex.setStyle("vertexStyle");
+
+                System.out.println(vertex.getValue().toString() + " is a vertex");
+            }else if(((mxCell) cell).isEdge()){
+                mxCell edge = (mxCell) cell;
+
+                System.out.println(edge.getValue().toString() + " is an edge");
+                edge.setStyle("edgeStyle");
+            }
+
+        }
     }
 
     private static void setupGraphEvents(JGraphXAdapter<Line, DefaultEdge> adapter){
@@ -206,4 +239,6 @@ public class Visuals {
             }
         });
     }
+
+ */
 }

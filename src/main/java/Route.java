@@ -39,7 +39,7 @@ public class Route {
         RouteParameter routeParameter = null;
 
         for (RouteParameter parameter : paramList) {
-            if(terminals.equals(parameter.getStationPair()) && arriveTime < parameter.getTimeTo()){
+            if(terminals.equals(parameter.getTerminals()) && arriveTime < parameter.getTimeTo()){
                 routeParameter = parameter;
                 break;
             }
