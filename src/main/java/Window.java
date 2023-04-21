@@ -1,21 +1,29 @@
-import javax.imageio.ImageIO;
+import org.apache.poi.ss.formula.atp.IfNa;
+
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * This class is responsible for the GUI
+ * This class is responsible for app windows
  */
-public class Frames {
-/*
+public class Window {
+    private static Window instance;
+    private static final String APP_NAME = "VSP Graph Visuals";
+    private boolean helperHidden = false;
+
+    public static Window getInstance() {
+        if(instance == null)
+            instance = new Window();
+
+        return instance;
+    }
+
+    Window() {
+    }
+
+    /*
     private static final String TIMESTAMP_PATTERN = "yyyyMMdd_HHmmss";
     private static final String SAVE_FOLDER = ".\\src\\main\\resources\\graph_exports";
     private final static JLabel label = new JLabel("Selected: None (Click on an edge or vertex to show info)");
@@ -45,54 +53,6 @@ public class Frames {
         }
 
         return isSuccessful;
-    }
-
-    public static void MainMenu(){
-        JFrame frame = new JFrame("VSP Graph Visuals");
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-
-        JLabel jlabel = new JLabel("VSP Graph Visuals");
-        jlabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(jlabel);
-        jlabel.setVisible(true);
-        panel.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        JButton connenctionBased = new JButton("Connenction based graph");
-        connenctionBased.setAlignmentX(Component.CENTER_ALIGNMENT);
-        connenctionBased.addActionListener(e -> {
-            ConnectionBasedGraphView();
-            frame.dispose();
-        });
-        panel.add(connenctionBased);
-        panel.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        JButton timeSpace = new JButton("Time-space graph");
-        timeSpace.setAlignmentX(Component.CENTER_ALIGNMENT);
-        timeSpace.addActionListener(e -> System.out.println("Time-space pressed"));
-        panel.add(timeSpace);
-        panel.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        JButton buildIP = new JButton("Build IP model");
-        buildIP.setAlignmentX(Component.CENTER_ALIGNMENT);
-        buildIP.addActionListener(e -> System.out.println("BuildIP pressed"));
-        panel.add(buildIP);
-        panel.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        JButton exit = new JButton("Exit");
-        exit.setAlignmentX(Component.CENTER_ALIGNMENT);
-        exit.addActionListener(e -> frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING)));
-        panel.add(exit);
-        panel.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        frame.getContentPane().add(panel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 
     public static void ConnectionBasedGraphView(){
@@ -240,5 +200,96 @@ public class Frames {
         });
     }
 
- */
+ */ //Old code
+
+    public void OpenMainMenu(){
+        System.setProperty("sun.java2d.uiScale", "1.0"); //Must leave because of ui shifting...
+        JFrame frame = new JFrame(APP_NAME);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+
+        panel.add(MenuLabel());
+        panel.add(Separator(10));
+        panel.add(Button("Connection based graph", e -> {
+            OpenConnectionBased();
+            frame.dispose();
+        }));
+        panel.add(Separator(10));
+        panel.add(Button("Time-space graph", e -> {
+            System.out.println("Time-space pressed");
+        }));
+        panel.add(Separator(10));
+        panel.add(Button("Build IP model", e -> {
+            System.out.println("Build IP model");
+        }));        panel.add(Separator(10));
+        panel.add(Button("Exit", e -> {
+            frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+        }));
+
+        frame.getContentPane().add(panel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    public void OpenConnectionBased(){
+        JFrame frame = new JFrame(APP_NAME);
+        JPanel mainPanel = new JPanel();
+        JPanel buttonPanel = new JPanel();
+        Component graphView = GraphView.BuildConnectionBasedView(GraphModel.BuildConnectionBasedGraph());
+
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+        buttonPanel.add(BackButton(frame));
+        buttonPanel.add(Button("Toggle depots", e -> {
+            GraphView.ToggleDepots();
+        }));
+
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.add(buttonPanel);
+        mainPanel.add(graphView);
+
+        frame.add(mainPanel);
+        frame.setSize(800,600);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+
+    private static JButton BackButton(JFrame frame){
+        JButton button = new JButton("Back to menu");
+
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        button.addActionListener(e -> {
+            instance.OpenMainMenu();
+            frame.dispose();
+        });
+
+        return button;
+    }
+
+    private static JButton Button(String label, ActionListener listener){
+        JButton button = new JButton(label);
+
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        button.addActionListener(listener);
+
+        return button;
+    }
+
+    private static JLabel MenuLabel(){
+        JLabel jlabel = new JLabel(APP_NAME);
+        jlabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        jlabel.setVisible(true);
+
+        return jlabel;
+    }
+
+    private static Component Separator(int height){
+        return Box.createRigidArea(new Dimension(0, height));
+    }
+
 }

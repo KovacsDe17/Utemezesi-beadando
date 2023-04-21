@@ -5,6 +5,7 @@ import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
+import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.swing_viewer.ViewPanel;
 import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
@@ -24,6 +25,8 @@ public class Clicks implements ViewerListener {
     protected boolean loop = true;
 
     public Clicks() {
+        System.setProperty("sun.java2d.uiScale", "1.0"); //Must leave because of ui shifting...
+
         // We do as usual to display a graph. This
         // connect the graph outputs to the viewer.
         // The viewer is a sink of the graph.
@@ -59,9 +62,8 @@ public class Clicks implements ViewerListener {
         System.out.println("Position of " + a + " is " + Arrays.toString(pos));
 
         //View display
-        Viewer viewer = graph.display(false);
-        ViewPanel view = (ViewPanel) viewer.getDefaultView(); // ViewPanel is the view for gs-ui-swing
-        view.resizeFrame(800, 600);
+        SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+        View view = viewer.addDefaultView(true);
         //view.getCamera().setViewCenter(0, 0, 0);
         viewer.disableAutoLayout();
         viewer.getDefaultView().enableMouseOptions();
@@ -127,5 +129,9 @@ public class Clicks implements ViewerListener {
 
     public void mouseLeft(String id) {
         System.out.println(id + " has left ");
+    }
+
+    public static void main(String[] args) {
+        new Clicks();
     }
 }

@@ -1,20 +1,81 @@
+import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleDirectedGraph;
+
+import java.util.List;
 
 /**
  * This class is responsible for the graph logic, such as manipulating nodes and edges
  */
 public class GraphModel {
+    private static Graph<ConnectionBasedNode, DefaultEdge> connectionBasedGraph;
 
     /**
      * Loads data from the Excel input file and builds a Connection Based VSP Graph based on it
      * @return A graph based on the Excel input file
      */
-    public static org.jgrapht.Graph<Line, DefaultEdge> LoadConnectionBasedGraph(){
-        //Load list from Excel...
+    public static org.jgrapht.Graph<ConnectionBasedNode, DefaultEdge> BuildConnectionBasedGraph(){
+        //Load line list
+        List<Line> lines = Line.getListFromExcel();
+
+        Graph<ConnectionBasedNode, DefaultEdge> graph = new SimpleDirectedGraph<>(DefaultEdge.class);
 
         //Parse list to graph...
 
+        // -- Rules of making the graph -- //
+        /*
+         * Nodes:
+         * Add +2 depot nodes
+         * Add all G1 and G2 from lines list
+         * Set edges described below
+         *
+         * Edges:
+         * From DepotStart --> All G1
+         * From All G2 --> DepotEnd
+         * All G1-G2 pair
+         * All G2-G1 pair where they are compatible
+         */
+
+        //Add depot nodes (D1 and D2 are the same, hence the set id's)
+        ConnectionBasedNode D1 = new ConnectionBasedNode("D", "D1");
+        ConnectionBasedNode D2 = new ConnectionBasedNode("D'", "D2");
+
+        graph.addVertex(D1);
+        graph.addVertex(D2);
+
+        for(Line line : lines){
+            //Add G nodes
+            ConnectionBasedNode nodeG1 = new ConnectionBasedNode(line.getId() + "","G1");
+            ConnectionBasedNode nodeG2 = new ConnectionBasedNode(line.getId() + "'","G2");
+
+            graph.addVertex(nodeG1);
+            graph.addVertex(nodeG2);
+
+            //Set main edges (depot->G1, G1->G2, G2->depot)
+            graph.addEdge(D1,nodeG1);
+            graph.addEdge(nodeG2,D2);
+            graph.addEdge(nodeG1,nodeG2);
+
+            for(Line nextLine : lines){
+                if(line.compatible(nextLine)){
+                    ConnectionBasedNode nextG1 = findNodeWithID(graph, nextLine.getId() + "");
+                    if (nextG1 != null)
+                        graph.addEdge(nodeG2, nextG1);
+                }
+            }
+        }
+
         //Return graph
+        return graph;
+    }
+
+    private static ConnectionBasedNode findNodeWithID(Graph<ConnectionBasedNode, DefaultEdge> graph, String id){
+        for(ConnectionBasedNode node : graph.vertexSet()){
+            if(node.getId().equals(id)){
+                return node;
+            }
+        }
+
         return null;
     }
 
@@ -87,5 +148,5 @@ public class GraphModel {
         return graph;
     }
 
-     */
+     */ //Old code
 }

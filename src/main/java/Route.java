@@ -3,14 +3,18 @@ import java.util.List;
 import java.util.Map;
 
 public class Route {
-    public static List<RouteParameter> toList(Map<Integer, List<String>> parametersData){
-        List<RouteParameter> parameters = new ArrayList<>();
+    public static List<RouteParameter> getListFromExcel(){
+        Excel excel = Excel.getInstance();
+        Map<Integer, List<String>> parametersData = excel.getDataFrom(excel.defaultWorkbook(), 0);
 
         //Remove unnecessary header lines
         int rowsToRemove = 4;
         for (int i = 0; i <= rowsToRemove; i++) {
             parametersData.remove(i);
         }
+
+        //Build route parameter list
+        List<RouteParameter> parameters = new ArrayList<>();
 
         for (Map.Entry<Integer, List<String>> row:
                 parametersData.entrySet()) {

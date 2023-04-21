@@ -1,7 +1,8 @@
 import java.util.*;
+import java.util.List;
 
 public class Line {
-    private static int count = 0;
+    private static int count = 1;
 
     private final int departureTime;
     private final int arriveTime;
@@ -16,6 +17,14 @@ public class Line {
         this.terminals = terminals;
         this.id = count;
         count++;
+    }
+
+    private static void ResetCounter(){
+        count = 1;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override
@@ -33,7 +42,7 @@ public class Line {
     }
 
     /***
-     * Compatibility: If the current trip arrives at the starting station of the next one before the next one departs (including technological and equalizing times).
+     * Compatible: When the current trip arrives at the starting station of the next one before the next one departs (including technological and equalizing times).
      * @param nextLine The trip which comes after the current one.
      * @return True if the trips are compatible, false otherwise.
      */
@@ -58,13 +67,21 @@ public class Line {
         return Objects.hash(arriveTime, departureTime, terminals);
     }
 
-    public static List<Line> toList(Map<Integer, List<String>> busLinesData, List<RouteParameter> routeParameters){
+    public static List<Line> getListFromExcel(){
+        Excel excel = Excel.getInstance();
+        Map<Integer, List<String>> lineDataAsMap = excel.getDataFrom(excel.defaultWorkbook(), 1);
+        List<RouteParameter> routeParameters = Route.getListFromExcel();
+
+        //Remove unnecessary header
+        lineDataAsMap.remove(0);
+
+        //Build line list
         List<Line> lines = new ArrayList<>();
 
-        //Remove header
-        busLinesData.remove(0);
+        ResetCounter();
+
         for (Map.Entry<Integer, List<String>> row:
-                busLinesData.entrySet()) {
+                lineDataAsMap.entrySet()) {
 
             int departureTime = (int) Float.parseFloat(row.getValue().get(0));
             int arriveTime = (int) Float.parseFloat(row.getValue().get(1));

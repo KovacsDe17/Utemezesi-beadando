@@ -32,7 +32,7 @@ public class Excel {
         return workbook;
     }
 
-    public Workbook openWorkbook(){
+    public Workbook defaultWorkbook(){
         return openWorkbook(DEFAULT_FILE_LOCATION);
     }
 

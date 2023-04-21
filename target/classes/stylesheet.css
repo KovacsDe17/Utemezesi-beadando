@@ -7,21 +7,32 @@ node{
     stroke-color: black; /* Default is black. */
     text-alignment: center;
 }
+
 node:clicked{
-    fill-color: red;
+    stroke-color: grey;
+    stroke-width: 2px;
 }
 
 edge{
     arrow-size: 10px,5px;
-}
-
-edge.rezsi{
     stroke-mode: dashes;
+    fill-color: lightgrey;
+    stroke-width: 0.2px;
 }
 
-sprite{
+edge.out{
+    fill-color: red;
+    stroke-mode: plain;
+}
+
+edge.in{
+    fill-color: green;
+    stroke-mode: plain;
+}
+
+sprite#info{
     shape: box;
-    size: 32px;
+    size: 100px, 50px;
     fill-color: blue;
-    z-index: -1;
+    z-index: 50;
 }
