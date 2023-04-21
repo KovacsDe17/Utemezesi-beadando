@@ -1,5 +1,3 @@
-import org.apache.poi.ss.formula.atp.IfNa;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -18,9 +16,6 @@ public class Window {
             instance = new Window();
 
         return instance;
-    }
-
-    Window() {
     }
 
     /*
@@ -223,7 +218,8 @@ public class Window {
         }));
         panel.add(Separator(10));
         panel.add(Button("Build IP model", e -> {
-            System.out.println("Build IP model");
+            OpenIPModel();
+            frame.dispose();
         }));        panel.add(Separator(10));
         panel.add(Button("Exit", e -> {
             frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
@@ -231,7 +227,7 @@ public class Window {
 
         frame.getContentPane().add(panel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
+        frame.setMinimumSize(new Dimension(300,225));
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
@@ -254,6 +250,28 @@ public class Window {
 
         frame.add(mainPanel);
         frame.setSize(800,600);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+
+    public void OpenIPModel(){
+        JFrame frame = new JFrame(APP_NAME);
+        JPanel mainPanel = new JPanel();
+        JLabel modelText = new JLabel();
+
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.add(BackButton(frame));
+        mainPanel.add(Button("Generate Model", e -> {
+            String text = IPBuilder.BuildModel(GraphModel.BuildConnectionBasedGraph(),true);
+            modelText.setText(text);
+            mainPanel.updateUI();
+        }));
+        mainPanel.add(Separator(20));
+        mainPanel.add(modelText);
+
+        frame.add(mainPanel);
+        frame.setMinimumSize(new Dimension(400,400));
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
