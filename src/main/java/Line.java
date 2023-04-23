@@ -27,6 +27,22 @@ public class Line {
         return id;
     }
 
+    public Terminals getTerminals() {
+        return terminals;
+    }
+
+    public int getDepartureTime() {
+        return departureTime;
+    }
+
+    public int getArriveTime() {
+        return arriveTime;
+    }
+
+    public int getAdditionalTime() {
+        return additionalTime;
+    }
+
     @Override
     public String toString() {
         return "L_"+id;

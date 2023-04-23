@@ -208,13 +208,20 @@ public class Window {
 
         panel.add(MenuLabel());
         panel.add(Separator(10));
-        panel.add(Button("Connection based graph", e -> {
-            OpenConnectionBased();
+        panel.add(Button("Connection Based Graph", e -> {
+            OpenGraphView(
+                    "Connection Based Graph",
+                    GraphView.BuildConnectionBasedView(GraphModel.BuildConnectionBasedGraph())
+            );
             frame.dispose();
         }));
         panel.add(Separator(10));
-        panel.add(Button("Time-space graph", e -> {
-            System.out.println("Time-space pressed");
+        panel.add(Button("Time-Space Graph", e -> {
+            OpenGraphView(
+                    "Time-Space Graph",
+                    GraphView.BuildTimeSpacedView(GraphModel.BuildTimeSpaceGraph())
+            );
+            frame.dispose();
         }));
         panel.add(Separator(10));
         panel.add(Button("Build IP model", e -> {
@@ -232,11 +239,11 @@ public class Window {
         frame.setVisible(true);
     }
 
-    public void OpenConnectionBased(){
-        JFrame frame = new JFrame(APP_NAME);
+    public void OpenGraphView(String graphType, Component graphView){
+        JFrame frame = new JFrame(APP_NAME + " - " + graphType);
         JPanel mainPanel = new JPanel();
         JPanel buttonPanel = new JPanel();
-        Component graphView = GraphView.BuildConnectionBasedView(GraphModel.BuildConnectionBasedGraph());
+        //Component graphView = ;
 
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         buttonPanel.add(BackButton(frame));

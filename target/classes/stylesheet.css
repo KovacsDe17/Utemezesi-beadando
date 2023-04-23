@@ -36,3 +36,47 @@ sprite#info{
     fill-color: blue;
     z-index: 50;
 }
+
+sprite.terminalLabel{
+    shape: box;
+    size: 200px, 25px;
+    fill-mode: none;
+
+    text-padding: 4px;
+    text-background-mode: plain;
+    text-background-color: lightgrey;
+    text-color: white;
+    text-size: 16px;
+    text-alignment: left;
+}
+
+edge.depot{
+    stroke-mode: dashes;
+    stroke-color: green;
+    fill-color: green;
+}
+
+edge.waiting{
+    stroke-mode: dots;
+    stroke-color: orange;
+    fill-color: orange;
+}
+
+edge.busline{
+    stroke-mode: plain;
+    stroke-color: purple;
+    fill-color: purple;
+}
+
+edge.overhead{
+    stroke-mode: plain;
+    stroke-color: red;
+    fill-color: red;
+    stroke-width: 0.1px;
+}
+
+node:selected{
+    fill-color: red;
+}
+
+

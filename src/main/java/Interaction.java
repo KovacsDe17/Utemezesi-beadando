@@ -2,24 +2,12 @@ import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
 
 public class Interaction implements ViewerListener {
-    ViewerPipe fromViewer;
-
-    public Interaction(ViewerPipe fromViewer){
-        this.fromViewer = fromViewer;
-
-        Thread newThread = new Thread(() -> {
-            while(loop) {
-                fromViewer.pump();
-            }
-        });
-        newThread.start();
-
-    }
 
     private static boolean loop = true;
 
     public void viewClosed(String id) {
         loop = false;
+        System.out.println("View closed");
     }
 
     public void buttonPushed(String id) {

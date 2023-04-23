@@ -9,7 +9,7 @@ import java.io.IOException;
  * This class is responsible for building an AMPL text IP model from a given Connection Based graph
  */
 public class IPBuilder {
-    private static final String SAVE_NAME = "model.txt";
+    private static final String SAVE_NAME = "conn_based_model\\model.txt";
     /**
      * Builds an IP model from the given Connection Based graph
      * @param graph The graph to build the model from
