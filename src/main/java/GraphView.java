@@ -291,7 +291,7 @@ public class GraphView {
             }
         });
         thread.start();
-        
+
  */
 
         System.out.println("Time-Space Graph info --- Vertices: " + graphModel.vertexSet().size() + ", Edges: " + graphModel.edgeSet().size());

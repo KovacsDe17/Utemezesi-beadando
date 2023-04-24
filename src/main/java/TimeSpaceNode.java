@@ -1,5 +1,3 @@
-import org.w3c.dom.Node;
-
 public class TimeSpaceNode {
     private final String id;
     private final String terminal;
