@@ -2,31 +2,25 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 import org.graphstream.ui.swing_viewer.SwingViewer;
-import org.graphstream.ui.swing_viewer.ViewPanel;
 import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
-import org.graphstream.ui.view.util.InteractiveElement;
-import org.graphstream.ui.view.util.MouseManager;
 
-import javax.swing.*;
 import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.Set;
 
 import static org.graphstream.ui.graphicGraph.GraphPosLengthUtils.nodePosition;
 
-public class Clicks implements ViewerListener {
+public class Clicks_old implements ViewerListener {
     protected boolean loop = true;
 
-    public Clicks() {
+    public Clicks_old() {
         System.setProperty("sun.java2d.uiScale", "1.0"); //Must leave because of ui shifting...
 
+        /*
         // We do as usual to display a graph. This
         // connect the graph outputs to the viewer.
         // The viewer is a sink of the graph.
@@ -84,6 +78,8 @@ public class Clicks implements ViewerListener {
         // the program.
         viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.EXIT);
 
+
+
         // We connect back the viewer to the graph,
         // the graph becomes a sink for the viewer.
         // We also install us as a viewer listener to
@@ -109,6 +105,8 @@ public class Clicks implements ViewerListener {
             // to avoid 100% CPU usage. The blockingPump() method is only available from
             // the nightly builds.
         }
+
+        */
     }
 
     public void viewClosed(String id) {
@@ -132,6 +130,6 @@ public class Clicks implements ViewerListener {
     }
 
     public static void main(String[] args) {
-        new Clicks();
+        //new Clicks();
     }
 }

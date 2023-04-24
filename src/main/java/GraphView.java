@@ -1,7 +1,6 @@
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 import org.graphstream.ui.swing_viewer.SwingViewer;
@@ -24,8 +23,6 @@ public class GraphView {
 
     private static org.graphstream.graph.Graph currentGraph;
     private static boolean depotshidden = false;
-    private static boolean loop = true;
-
 
     /*
         MultiGraph graph = new MultiGraph("Bazinga!");
@@ -77,7 +74,6 @@ public class GraphView {
         //Retrieving mouse clicks
         viewer.getDefaultView().enableMouseOptions();
         //viewer.getDefaultView().setMouseManager(new MyMouseManager());
-
 
         //Open Clicks
         new Clicks();
@@ -153,11 +149,23 @@ public class GraphView {
             edgeView.setAttribute("ui.class", type);
         }
 
-        SwingViewer swingViewer = new SwingViewer(graphView, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+        SwingViewer swingViewer = new SwingViewer(graphView, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
         View view = swingViewer.addDefaultView(false);
         view.getCamera().setViewPercent(0.02);
         view.getCamera().setViewCenter(1.5,2.5,0);
         view.getCamera().resetView();
+        view.enableMouseOptions();
+
+        Thread thread = new Thread(() -> {
+            ViewerPipe fromViewer = swingViewer.newViewerPipe();
+            fromViewer.addViewerListener(new MyViewerListener(graphView));
+            fromViewer.addSink(graphView);
+
+            while(MyViewerListener.loop) {
+                fromViewer.pump();
+            }
+        });
+        thread.start();
 
         JPanel graphPanel = new JPanel(); //To eliminate mouse shifting
         graphPanel.setLayout(new GridLayout(0, 1));
@@ -261,7 +269,7 @@ public class GraphView {
             edgeView.setAttribute("ui.class", type);
         }
 
-        SwingViewer swingViewer = new SwingViewer(graphView, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+        SwingViewer swingViewer = new SwingViewer(graphView, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
         View view = swingViewer.addDefaultView(false);
         view.getCamera().setViewPercent(0.02);
         view.getCamera().setViewCenter(1.5,2.5,0);
@@ -272,47 +280,23 @@ public class GraphView {
         graphPanel.add((Component) view);
         currentGraph = graphView;
 
+/*
+        Thread thread = new Thread(() -> {
+            ViewerPipe fromViewer = swingViewer.newViewerPipe();
+            fromViewer.addViewerListener(new MyViewerListener(graphView));
+            fromViewer.addSink(graphView);
 
-        /*
-        swingViewer.getDefaultView().enableMouseOptions();
-
-        ViewerPipe fromViewer = swingViewer.newViewerPipe();
-        fromViewer.addViewerListener(new Interaction());
-        fromViewer.addSink(graphView);
-
-        while(loop) {
-            fromViewer.pump();
-        }
-        */
-
+            while(MyViewerListener.loop) {
+                fromViewer.pump();
+            }
+        });
+        thread.start();
+        
+ */
 
         System.out.println("Time-Space Graph info --- Vertices: " + graphModel.vertexSet().size() + ", Edges: " + graphModel.edgeSet().size());
 
         return graphPanel;
-    }
-
-    public static void EnableInteraction(SingleGraph graph){
-
-    }
-
-    private SingleGraph testGraphView(){
-        SingleGraph graphView = new SingleGraph("TestGraph");
-        graphView.setAttribute("stylesheet", STYLESHEET);
-
-        //Populating the graph
-        Node a = graphView.addNode("A" );
-        Node b = graphView.addNode("B" );
-        Node c = graphView.addNode("C" );
-        graphView.addEdge("AB", "A", "B");
-        graphView.addEdge("BC", "B", "C");
-        graphView.addEdge("CA", "C", "A");
-
-        //Setting position of nodes
-        a.setAttribute("xy", 1,1);
-        b.setAttribute("xy", 2,1);
-        c.setAttribute("xy", 1.5,2);
-
-        return graphView;
     }
 
     public static void ResetToggleDepots(){
@@ -359,5 +343,4 @@ public class GraphView {
             }
         }
     }
-
 }

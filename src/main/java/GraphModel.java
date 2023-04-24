@@ -41,8 +41,8 @@ public class GraphModel {
 
             //Set main edges (depot->G1, G1->G2, G2->depot)
             graph.addEdge(D1,nodeG1);
-            graph.addEdge(nodeG2,D2);
             graph.addEdge(nodeG1,nodeG2);
+            graph.addEdge(nodeG2,D2);
 
             for(Line nextLine : lines){
                 if(line.compatible(nextLine)){
