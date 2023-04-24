@@ -1,7 +1,12 @@
+import org.jfree.chart.resources.JFreeChartResources;
+
 import javax.swing.*;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
 /**
  * This class is responsible for app windows
@@ -198,7 +203,7 @@ public class Window {
  */ //Old code
 
     public void OpenMainMenu(){
-        System.setProperty("sun.java2d.uiScale", "1.0"); //Must leave because of ui shifting...
+        System.setProperty("sun.java2d.uiScale", "1.0"); //Must leave this here because of ui shifting...
         JFrame frame = new JFrame(APP_NAME);
 
         JPanel panel = new JPanel();
@@ -209,6 +214,7 @@ public class Window {
         panel.add(MenuLabel());
         panel.add(Separator(10));
         panel.add(Button("Connection Based Graph", e -> {
+            GraphView.ResetToggleDepots();
             OpenGraphView(
                     "Connection Based Graph",
                     GraphView.BuildConnectionBasedView(GraphModel.BuildConnectionBasedGraph())
@@ -217,6 +223,7 @@ public class Window {
         }));
         panel.add(Separator(10));
         panel.add(Button("Time-Space Graph", e -> {
+            GraphView.ResetToggleDepots();
             OpenGraphView(
                     "Time-Space Graph",
                     GraphView.BuildTimeSpacedView(GraphModel.BuildTimeSpaceGraph())
@@ -265,23 +272,50 @@ public class Window {
     public void OpenIPModel(){
         JFrame frame = new JFrame(APP_NAME);
         JPanel mainPanel = new JPanel();
-        JLabel modelText = new JLabel();
+        JTextArea modelText = new JTextArea();
+        JScrollPane scrollPane = new JScrollPane(modelText);
+        JButton saveButton = Button("Save into file...", e -> {
+            SaveFile(modelText.getText());
+        });
+
+        modelText.setEditable(false);
+
+        scrollPane.setBorder(new TitledBorder(new EtchedBorder(), "Connection Based Graph - Minimize vehicles required"));
 
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(BackButton(frame));
         mainPanel.add(Button("Generate Model", e -> {
-            String text = IPBuilder.BuildModel(GraphModel.BuildConnectionBasedGraph(),true);
+            String text = IPBuilder.BuildModel(GraphModel.BuildConnectionBasedGraph());
             modelText.setText(text);
+            saveButton.setEnabled(true);
             mainPanel.updateUI();
         }));
+        mainPanel.add(saveButton);
+        saveButton.setEnabled(false);
         mainPanel.add(Separator(20));
-        mainPanel.add(modelText);
+        mainPanel.add(scrollPane);
 
         frame.add(mainPanel);
-        frame.setMinimumSize(new Dimension(400,400));
+        frame.setMinimumSize(new Dimension(800,600));
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
+    }
+
+    private JFileChooser SaveFile(String modelText){
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save model...");
+        fileChooser.setSelectedFile(new File("model.txt"));
+
+        int userSelection = fileChooser.showSaveDialog(null);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            IPBuilder.SaveToFile(modelText, fileToSave.getAbsolutePath());
+            System.out.println("File saved: " + fileToSave.getAbsolutePath());
+        }
+
+        return fileChooser;
     }
 
     private static JButton BackButton(JFrame frame){

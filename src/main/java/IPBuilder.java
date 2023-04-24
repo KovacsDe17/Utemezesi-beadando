@@ -1,63 +1,97 @@
+import com.google.ortools.Loader;
+import com.google.ortools.linearsolver.MPConstraint;
+import com.google.ortools.linearsolver.MPObjective;
+import com.google.ortools.linearsolver.MPSolver;
+import com.google.ortools.linearsolver.MPVariable;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class is responsible for building an AMPL text IP model from a given Connection Based graph
  */
 public class IPBuilder {
-    private static final String SAVE_NAME = "conn_based_model\\model.txt";
     /**
      * Builds an IP model from the given Connection Based graph
      * @param graph The graph to build the model from
      * @return The IP model
      */
-    public static String BuildModel(Graph<ConnectionBasedNode, DefaultEdge> graph, boolean writeToFile){
-        String model = "asd";
-        // --- Get graph and iterate through it ---
+    public static String BuildModel(Graph<ConnectionBasedNode, DefaultEdge> graph){
+        String modelText = "<html>---<br>---<br>---<br>This is a test text for the model<br>---<br>---<br>---</html>";
 
-        // --- Add lines to the model string (remember to use '\n') ---
+        // --- Initialize model
+        Loader.loadNativeLibraries();
+        MPSolver model = MPSolver.createSolver("GLOP");
 
-        if(writeToFile)
-            SaveToFile(model);
+        //Set variable vector "X" and constant vector "C"
+        Map<DefaultEdge, MPVariable> X = new HashMap<>();
+        Map<DefaultEdge, Integer> C = new HashMap<>();
+        for(DefaultEdge edge : graph.edgeSet()){
+            ConnectionBasedNode source = graph.getEdgeSource(edge);
+            ConnectionBasedNode target = graph.getEdgeTarget(edge);
+
+            String varName = "x_(" + source.getId() + "_to_" + target.getId() + ")";
+            X.put(edge, model.makeIntVar(0,1,varName));
+
+            //Set cost of new vehicle high (they always start at depot), else it's 1
+            if(source.getId().equals("D"))
+                C.put(edge, 999999);
+            else
+                C.put(edge, 1);
+        }
+
+        // --- Set constraint: Execute every line exactly once ---
+        MPConstraint allLinesExactlyOnce = model.makeConstraint(1,1,"allLinesExactlyOnce");
+        for(DefaultEdge edge : graph.edgeSet()){
+            ConnectionBasedNode source = graph.getEdgeSource(edge);
+            ConnectionBasedNode target = graph.getEdgeTarget(edge);
+
+            //If it's a line edge <-- not a depot edge and the nodes id's are identical besides the "'"
+            if((source.getId()+"'").equals(target.getId())){
+                allLinesExactlyOnce.setCoefficient(X.get(edge),1);
+            }
+        }
+
+        // --- Set constraint: Every vehicle starts in a depot and finishes in one ---
+        // --- This equals: For every node it enters, will leave it too, except the depot nodes ---
+        MPConstraint startAndFinishInDepot = model.makeConstraint(0,0,"startAndFinishInDepot");
+
+        //For each node, check their edges
+        for(ConnectionBasedNode node : graph.vertexSet()){
+            for(DefaultEdge edgeOfNode : graph.edgesOf(node)){
+                //Check if this edge of the node is an exiting one
+                boolean isExiting = graph.getEdgeSource(edgeOfNode).getId().equals(node.getId());
+                //If it is an exiting edge, set coefficient to one, otherwise to -1
+                int coeff = isExiting ? 1 : -1;
+                //Add this edge to the constraints
+                startAndFinishInDepot.setCoefficient(X.get(edgeOfNode),coeff);
+            }
+        }
+
+        //Set Objective: Minimize Sum of X_e*C_e
+        MPObjective objective = model.objective();
+        for(DefaultEdge edge : graph.edgeSet()){
+            objective.setCoefficient(X.get(edge),C.get(edge));
+        }
+        objective.setMinimization();
+
+        modelText = model.exportModelAsLpFormat();
 
         // --- Show IP model in window after button press (pass/return the same string) ---
 
-        return model;
+        return modelText;
+
     }
 
-    // --- Idea 0 --- //
-    /*
-    * On a Connection Based graph set a 'c' cost to the edges:
-    * c_ij = 1 --> E2 (overhead lines), else c_ij = 0
-    *
-    * Solve for minimal cost full pairing --> get minimum number of vehicles needed
-    */
-
-    // --- Idea 1 --- //
-    /*
-     * On a Connection Based graph set a 'c' cost to the edges:
-     * c_ij = 1 --> E2 (overhead lines), else c_ij = 0
-     *
-     * Solve for minimal cost pairing
-     *
-     * If maximum number of vehicles is set (=k):
-     * Let x binary variables: x_ij = 1 if M pairing contains the (i,j) edge, 0 otherwise
-     * Use 'c' cost vector
-     * Vector of feasible solutions: X (of x_ij's):
-     * Sum_i(x_ij)=1, i=1,2,...,n*
-     * Sum_j(x_ij)=1, j=1,2,...,n*
-     * Sum_[(i,j) in E2](x_ij) <= k
-     * Goal: min_(i,j){cx|x in X, x_ij = {0,1}}
-     */
-
-    private static void SaveToFile(String text){
+    public static void SaveToFile(String modelText, String savePath){
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(SAVE_NAME));
-            writer.write(text);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(savePath));
+            writer.write(modelText);
             writer.close();
         }catch (IOException e){
             e.printStackTrace();

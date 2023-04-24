@@ -315,6 +315,10 @@ public class GraphView {
         return graphView;
     }
 
+    public static void ResetToggleDepots(){
+        depotshidden = false;
+    }
+
     public static void ToggleDepots(){
 
         Node d1 = currentGraph.getNode("D");
