@@ -1,11 +1,7 @@
-import org.apache.commons.collections4.Predicate;
-import org.apache.commons.collections4.set.PredicatedSortedSet;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,7 +16,7 @@ public class GraphModel {
      */
     public static org.jgrapht.Graph<ConnectionBasedNode, DefaultEdge> BuildConnectionBasedGraph(){
         //Load line list
-        List<Line> lines = Line.getListFromExcel();
+        List<Trip> trips = Trip.getListFromExcel();
 
         Graph<ConnectionBasedNode, DefaultEdge> graph = new SimpleDirectedGraph<>(DefaultEdge.class);
 
@@ -31,10 +27,10 @@ public class GraphModel {
         graph.addVertex(D1);
         graph.addVertex(D2);
 
-        for(Line line : lines){
+        for(Trip trip : trips){
             //Add G nodes
-            ConnectionBasedNode nodeG1 = new ConnectionBasedNode(line.getId() + "","G1");
-            ConnectionBasedNode nodeG2 = new ConnectionBasedNode(line.getId() + "'","G2");
+            ConnectionBasedNode nodeG1 = new ConnectionBasedNode(trip.getId() + "","G1");
+            ConnectionBasedNode nodeG2 = new ConnectionBasedNode(trip.getId() + "'","G2");
 
             graph.addVertex(nodeG1);
             graph.addVertex(nodeG2);
@@ -44,9 +40,9 @@ public class GraphModel {
             graph.addEdge(nodeG1,nodeG2);
             graph.addEdge(nodeG2,D2);
 
-            for(Line nextLine : lines){
-                if(line.compatible(nextLine)){
-                    ConnectionBasedNode nextG1 = findConnBasedNodeWithID(graph, nextLine.getId() + "");
+            for(Trip nextTrip : trips){
+                if(trip.compatible(nextTrip)){
+                    ConnectionBasedNode nextG1 = findConnBasedNodeWithID(graph, nextTrip.getId() + "");
                     if (nextG1 != null)
                         graph.addEdge(nodeG2, nextG1);
                 }
@@ -64,7 +60,7 @@ public class GraphModel {
      */
     public static org.jgrapht.Graph<TimeSpaceNode, DefaultEdge> BuildTimeSpaceGraph(){
         //Load line list
-        List<Line> lines = Line.getListFromExcel();
+        List<Trip> trips = Trip.getListFromExcel();
 
         Graph<TimeSpaceNode, DefaultEdge> graph = new SimpleDirectedGraph<>(DefaultEdge.class);
 
@@ -98,20 +94,20 @@ public class GraphModel {
         graph.addVertex(D1);
         graph.addVertex(D2);
 
-        for(Line line : lines) {
+        for(Trip trip : trips) {
             //Add G nodes
             TimeSpaceNode nodeG1 = new TimeSpaceNode(
-                    line.getId() + "",
-                    line.getTerminals().getStart(),
+                    trip.getId() + "",
+                    trip.getTerminals().getStart(),
                     TimeSpaceNode.NodeType.DEPART,
-                    line.getDepartureTime()
+                    trip.getDepartureTime()
             );
 
             TimeSpaceNode nodeG2 = new TimeSpaceNode(
-                    line.getId() + "'",
-                    line.getTerminals().getEnd(),
+                    trip.getId() + "'",
+                    trip.getTerminals().getEnd(),
                     TimeSpaceNode.NodeType.ARRIVE,
-                    line.getArriveTime()
+                    trip.getArriveTime()
             );
 
             graph.addVertex(nodeG1);
@@ -123,9 +119,9 @@ public class GraphModel {
             graph.addEdge(nodeG1, nodeG2);
             graph.addEdge(nodeG2, D2);
 
-            for (Line nextLine : lines) {
-                if (line.compatible(nextLine)) {
-                    TimeSpaceNode nextG1 = findTimeSpaceNodeWithID(graph, nextLine.getId() + "");
+            for (Trip nextTrip : trips) {
+                if (trip.compatible(nextTrip)) {
+                    TimeSpaceNode nextG1 = findTimeSpaceNodeWithID(graph, nextTrip.getId() + "");
                     if (nextG1 != null)
                         graph.addEdge(nodeG2, nextG1);
                 }

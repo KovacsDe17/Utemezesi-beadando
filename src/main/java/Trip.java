@@ -1,7 +1,7 @@
 import java.util.*;
 import java.util.List;
 
-public class Line {
+public class Trip {
     private static int count = 1;
 
     private final int departureTime;
@@ -10,7 +10,7 @@ public class Line {
     private final Terminals terminals;
     private final int id;
 
-    public Line(int departureTime, int arriveTime, int additionalTime, Terminals terminals) {
+    public Trip(int departureTime, int arriveTime, int additionalTime, Terminals terminals) {
         this.departureTime = departureTime;
         this.arriveTime = arriveTime;
         this.additionalTime = additionalTime;
@@ -59,23 +59,23 @@ public class Line {
 
     /***
      * Compatible: When the current trip arrives at the starting station of the next one before the next one departs (including technological and equalizing times).
-     * @param nextLine The trip which comes after the current one.
+     * @param nextTrip The trip which comes after the current one.
      * @return True if the trips are compatible, false otherwise.
      */
-    public boolean compatible(Line nextLine) {
-        if (this.equals(nextLine)) return false;
-        return arriveTime + additionalTime <= nextLine.departureTime &&
-                terminals.getEnd().equals(nextLine.terminals.getStart());
+    public boolean compatible(Trip nextTrip) {
+        if (this.equals(nextTrip)) return false;
+        return arriveTime + additionalTime <= nextTrip.departureTime &&
+                terminals.getEnd().equals(nextTrip.terminals.getStart());
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Line line = (Line) o;
-        return arriveTime == line.arriveTime &&
-                departureTime == line.departureTime &&
-                Objects.equals(terminals, line.terminals);
+        Trip trip = (Trip) o;
+        return arriveTime == trip.arriveTime &&
+                departureTime == trip.departureTime &&
+                Objects.equals(terminals, trip.terminals);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class Line {
         return Objects.hash(arriveTime, departureTime, terminals);
     }
 
-    public static List<Line> getListFromExcel(){
+    public static List<Trip> getListFromExcel(){
         Excel excel = Excel.getInstance();
         Map<Integer, List<String>> lineDataAsMap = excel.getDataFrom(excel.defaultWorkbook(), 1);
         List<RouteParameter> routeParameters = Route.getListFromExcel();
@@ -92,7 +92,7 @@ public class Line {
         lineDataAsMap.remove(0);
 
         //Build line list
-        List<Line> lines = new ArrayList<>();
+        List<Trip> trips = new ArrayList<>();
 
         ResetCounter();
 
@@ -106,16 +106,16 @@ public class Line {
             Terminals terminals = Terminals.FindPair(tripType);
             RouteParameter routeParameter = Route.findCompatible(routeParameters, terminals, arriveTime);
 
-            Line line = new Line(
+            Trip trip = new Trip(
                     departureTime,
                     arriveTime,
                     routeParameter.getAdditionalTime(),
                     terminals
             );
 
-            lines.add(line);
+            trips.add(trip);
         }
 
-        return lines;
+        return trips;
     }
 }
