@@ -127,14 +127,17 @@ public class GraphModel {
                 }
             }
 
-            //Add waiting edges
+            // --- Add waiting edges ---
+            // For each node, find the next (in time) node which could make a waiting edge
             for (TimeSpaceNode node : graph.vertexSet()) {
-                for (TimeSpaceNode nextNode : graph.vertexSet()) {
+                //
+                for (TimeSpaceNode nextNode : graph.vertexSet().stream().sorted(Comparator.comparingInt(TimeSpaceNode::getTime)).collect(Collectors.toList())) {
                     //If two nodes are in the same terminal, the first one is arriving before and the next one is departing after, add a "waiting edge"
                     if (node.getTerminal().equals(nextNode.getTerminal()) &&
                             (node.getType() == TimeSpaceNode.NodeType.ARRIVE && nextNode.getType() == TimeSpaceNode.NodeType.DEPART) &&
                             node.getTime() < nextNode.getTime()) {
                         graph.addEdge(node, nextNode);
+                        break; //Get only the first edge for each of these
                     }
                 }
             }
