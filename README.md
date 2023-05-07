@@ -6,7 +6,7 @@
 0) Java Runtime Environment 11 verzió telepítése
 1) *[VSP_KovacsDaniel_WQU2KS.jar](https://github.com/KovacsDe17/Utemezesi-beadando/blob/main/target/VSP_KovacsDaniel_WQU2KS.jar)* letöltése
 2) A letöltött *VSP_KovacsDaniel_WQU2KS.jar* fájl mellé egy "*input*" nevű mappa létrehozása
-3) Az "Input_VSP.xlsx" fájl "*input*" mappába másolása
+3) Az "*Input_VSP.xlsx*" fájl "*input*" mappába másolása
 4) A *VSP_KovacsDaniel_WQU2KS.jar* fájl indítása dupla kattintással vagy a `java -jar "VSP_KovacsDaniel_WQU2KS.jar"` paranccsal
 5) A főmenüből válasszuk ki valamely lehetőséget
 
