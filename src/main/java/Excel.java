@@ -27,14 +27,6 @@ public class Excel {
         InputStream file;
         Workbook workbook;
 
-        /*
-        try{
-            file = new FileInputStream(new File(fileLocation));
-            workbook = new XSSFWorkbook(file);
-        } catch (IOException e){
-            System.err.println(e.getMessage());
-        }*/
-
         //Get file from resources folder
         ClassLoader classLoader = getClass().getClassLoader();
 

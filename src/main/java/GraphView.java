@@ -156,6 +156,7 @@ public class GraphView {
         view.getCamera().resetView();
         view.enableMouseOptions();
 
+        /*
         Thread thread = new Thread(() -> {
             ViewerPipe fromViewer = swingViewer.newViewerPipe();
             fromViewer.addViewerListener(new MyViewerListener(graphView));
@@ -166,6 +167,7 @@ public class GraphView {
             }
         });
         thread.start();
+         */
 
         JPanel graphPanel = new JPanel(); //To eliminate mouse shifting
         graphPanel.setLayout(new GridLayout(0, 1));
@@ -210,49 +212,49 @@ public class GraphView {
         int y;
         double yScale = 50;
         //For each node in model --> add a node into the view and set attributes, edges
-        for (TimeSpaceNode node : graphModel.vertexSet()){
-            Node viewNode = graphView.addNode(node.getId());
+        for (TimeSpaceNode modelNode : graphModel.vertexSet()){
+            Node viewNode = graphView.addNode(modelNode.getId());
 
-            viewNode.setAttribute("ui.label", node.getId());
-            viewNode.setAttribute("type", node.getType());
+            viewNode.setAttribute("ui.label", modelNode.getId());
+            viewNode.setAttribute("type", modelNode.getType());
             viewNode.setAttribute("layout.frozen");
 
-            x = node.getTime();
+            x = modelNode.getTime();
 
-            switch (node.getTerminal()){
+            switch (modelNode.getTerminal()){
                 case "Vá.1": y = 1; break;
                 case "Vá.2": y = 2; break;
                 default: y = 0; //Default is Depot node
             }
 
             viewNode.setAttribute("xy", x, y*yScale);
+
+            System.out.println("Terminal of node [" + modelNode.getId() + "] is " + modelNode.getTerminal());
         }
 
+        depot.setPosition(200, 0*yScale,0);
         terminal1.setPosition(200, 1*yScale,0);
         terminal2.setPosition(200, 2*yScale,0);
-        depot.setPosition(200, 0*yScale,0);
-
 
         //Set edges
+        for (DefaultEdge modelEdge : graphModel.edgeSet()) {
+            TimeSpaceNode modelSourceNode = graphModel.getEdgeSource(modelEdge);
+            TimeSpaceNode modelTargetNode = graphModel.getEdgeTarget(modelEdge);
 
-        for (DefaultEdge edge : graphModel.edgeSet()) {
-            TimeSpaceNode sourceModel = graphModel.getEdgeSource(edge);
-            TimeSpaceNode targetModel = graphModel.getEdgeTarget(edge);
+            Node sourceView = graphView.getNode(modelSourceNode.getId());
+            Node targetView = graphView.getNode(modelTargetNode.getId());
 
-            Node sourceView = graphView.getNode(sourceModel.getId());
-            Node targetView = graphView.getNode(targetModel.getId());
-
-            Edge edgeView = graphView.addEdge(sourceModel.getId() + "->" + targetModel.getId(), sourceView, targetView, true);
+            Edge edgeView = graphView.addEdge(modelSourceNode.getId() + "->" + modelTargetNode.getId(), sourceView, targetView, true);
 
             String type = "";
 
             //If edge comes from or goes to depot
-            if(sourceModel.getTerminal().equals("Garázs") || targetModel.getTerminal().equals("Garázs")){
+            if(modelSourceNode.getTerminal().equals("Garázs") || modelTargetNode.getTerminal().equals("Garázs")){
                 type = "depot";
             }
 
             //If edge "stays" in the same terminal and goes from an arriving (w/ ') node to a departing (w/o ') one
-            if(sourceModel.getTerminal().equals(targetModel.getTerminal()) &&
+            if(modelSourceNode.getTerminal().equals(modelTargetNode.getTerminal()) &&
                     (sourceView.getId().contains("'") && !targetView.getId().contains("'"))){
                 type = "waiting";
             }

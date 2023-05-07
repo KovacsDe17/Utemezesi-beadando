@@ -1,3 +1,7 @@
+import org.apache.commons.io.Charsets;
+
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -35,11 +39,15 @@ public class Terminals {
         return end;
     }
 
-    public static Terminals FindPair(String key){
+    public static Terminals FindPair(String originalKey){
+        String key = WinToUTF(originalKey);
         for (Map.Entry<String, Terminals> entry : associations.entrySet()) {
+            System.out.println("Trying to match [" + key + "] with [" + entry.getKey() + "]");
             if(entry.getKey().equals(key)){
+                System.out.println("Success!");
                 return entry.getValue();
             }
+
         }
 
         return new Terminals("NoStart","NoEnd");
@@ -65,5 +73,18 @@ public class Terminals {
     @Override
     public int hashCode() {
         return Objects.hash(start, end);
+    }
+
+    private static String WinToUTF(String original){
+        byte[] originalBytes = new byte[0];
+        originalBytes = original.getBytes(StandardCharsets.UTF_8);
+
+        try {
+            return new String(originalBytes, "windows-1250");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
