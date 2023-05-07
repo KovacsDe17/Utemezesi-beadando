@@ -17,7 +17,7 @@ import java.awt.*;
  * This class is responsible for graph visualization
  */
 public class GraphView {
-    private static final String STYLESHEET = "url(file://./src/main/resources/stylesheet.css)";
+    private static final String STYLESHEET_URL = Main.class.getClassLoader().getResource("stylesheet.css").toExternalForm(); //"url(file://./src/main/resources/stylesheet.css)";
     private static final String CONNECTION_BASED_ID = "ConnectionBased";
     private static final String TIME_SPACE_ID = "TimeSpace";
 
@@ -89,7 +89,7 @@ public class GraphView {
         System.setProperty("org.graphstream.ui", "swing");
 
         SingleGraph graphView = new SingleGraph(CONNECTION_BASED_ID);
-        graphView.setAttribute("stylesheet", STYLESHEET);
+        graphView.setAttribute("stylesheet", "url("+ STYLESHEET_URL +")");
         graphView.setAttribute("ui.antialias");
 
 
@@ -186,7 +186,7 @@ public class GraphView {
         System.setProperty("org.graphstream.ui", "swing");
 
         SingleGraph graphView = new SingleGraph(TIME_SPACE_ID);
-        graphView.setAttribute("stylesheet", STYLESHEET);
+        graphView.setAttribute("stylesheet", "url("+ STYLESHEET_URL +")");
         graphView.setAttribute("ui.antialias");
 
         //Adding sprites to Terminals
